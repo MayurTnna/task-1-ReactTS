@@ -7,7 +7,10 @@ const initialState: CartState = {
   total_price: 0,
 };
 
-const cartReducer = (state = initialState, action: CartActionTypes): CartState => {
+const cartReducer = (
+  state = initialState,
+  action: CartActionTypes
+): CartState => {
   const temp = { ...action.payload, total: 1 };
   const removeItem = state.data.filter((item) => item !== action.payload);
 

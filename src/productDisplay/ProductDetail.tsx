@@ -184,7 +184,7 @@ const ProductDetail: React.FC = () => {
                 </Stack>
               </SimpleGrid>
               <Link to="/product">
-                <Button className="mb-2 text-danger" variant={"ghost"}>
+                <Button className="mb-2 text-danger " variant={"ghost"}>
                   back
                 </Button>
               </Link>

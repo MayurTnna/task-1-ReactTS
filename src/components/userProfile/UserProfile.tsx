@@ -7,7 +7,6 @@ import { useFormik } from "formik";
 import { userProfileSchema } from "../../validation/Schema";
 import Header from "../common/Header";
 import { messages } from "../../constants/Constants";
-import { MyAvatar } from "./MyAvatar";
 
 interface User {
   first_name: string;
@@ -21,9 +20,11 @@ interface User {
 function UserProfile() {
   const navigate = useNavigate();
 
-  const userData: User[] = JSON.parse(localStorage.getItem("user") as string) || [];
+  const userData: User[] =
+    JSON.parse(localStorage.getItem("user") as string) || [];
   const handleUpdatePassword = () => {
     navigate("/forgotpassword");
+    console.log("Hello forgot");
   };
 
   const handleLogOut = () => {
@@ -44,47 +45,41 @@ function UserProfile() {
     email: loggedUser?.email || "",
   };
 
-  const {
-    values,
-    errors,
-    touched,
-    handleBlur,
-    handleChange,
-    handleSubmit,
-  } = useFormik({
-    initialValues,
-    validationSchema: userProfileSchema,
+  const { values, errors, touched, handleBlur, handleChange, handleSubmit } =
+    useFormik({
+      initialValues,
+      validationSchema: userProfileSchema,
 
-    onSubmit: (values) => {
-      const activeEmail = userData.filter((user) => user.isLogin === false);
-      console.log(activeEmail);
-      const newData = userData.map((item) => {
-        if (item.isLogin === true) {
-          if (activeEmail.some((item) => item.email === values.email)) {
-            console.log(item);
-            toast.error(messages.userSignFail);
-            return {
-              ...item,
-            };
+      onSubmit: (values) => {
+        const activeEmail = userData.filter((user) => user.isLogin === false);
+        console.log(activeEmail);
+        const newData = userData.map((item) => {
+          if (item.isLogin === true) {
+            if (activeEmail.some((item) => item.email === values.email)) {
+              console.log(item);
+              toast.error(messages.userSignFail);
+              return {
+                ...item,
+              };
+            } else {
+              toast.success(messages.UpdateSuccess);
+              return {
+                ...item,
+                first_name: values.first_name,
+                last_name: values.last_name,
+                mobile_no: values.mobile_no,
+                email: values.email,
+              };
+            }
           } else {
-            toast.success(messages.UpdateSuccess);
             return {
               ...item,
-              first_name: values.first_name,
-              last_name: values.last_name,
-              mobile_no: values.mobile_no,
-              email: values.email,
             };
           }
-        } else {
-          return {
-            ...item,
-          };
-        }
-      });
-      localStorage.setItem("user", JSON.stringify(newData));
-    },
-  });
+        });
+        localStorage.setItem("user", JSON.stringify(newData));
+      },
+    });
 
   return (
     <>
@@ -98,7 +93,6 @@ function UserProfile() {
                 <div className="modal-left">
                   <div className="profile-title">
                     <h1 className="modal-title">Welcome {values.first_name}</h1>
-                    {/* <MyAvatar imageUrlProfile={loggedUser?.imageUrlProfile} /> */}
                   </div>
                   <p className="modal-desc"></p>
                   <form onSubmit={handleSubmit}>
@@ -116,7 +110,9 @@ function UserProfile() {
                       />
                       <div className="float-end">
                         {errors.first_name && touched.first_name ? (
-                          <p className="form-error float-end">{errors.first_name}</p>
+                          <p className="form-error float-end">
+                            {errors.first_name}
+                          </p>
                         ) : (
                           <></>
                         )}
@@ -138,7 +134,9 @@ function UserProfile() {
                       />
                       <div className="float-end">
                         {errors.last_name && touched.last_name ? (
-                          <p className="form-error float-end">{errors.last_name}</p>
+                          <p className="form-error float-end">
+                            {errors.last_name}
+                          </p>
                         ) : (
                           <></>
                         )}
@@ -182,7 +180,9 @@ function UserProfile() {
                       />
                       <div className="float-end">
                         {errors.mobile_no && touched.mobile_no ? (
-                          <p className="form-error float-end">{errors.mobile_no}</p>
+                          <p className="form-error float-end">
+                            {errors.mobile_no}
+                          </p>
                         ) : (
                           <></>
                         )}

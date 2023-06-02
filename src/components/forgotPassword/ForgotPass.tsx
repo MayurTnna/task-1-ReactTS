@@ -3,37 +3,39 @@ import { useFormik } from "formik";
 import Button from "react-bootstrap/esm/Button";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { toast } from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { decryption } from "../../utils/Utils";
 import { forgotPasswordSchema } from "../../validation/Schema";
 import "../../assets/scss/forgotPassword.scss";
 import { messages } from "../../constants/Constants";
 
-const ForgotPass = () => {
-  const [showPassword, setShowPassword] = useState("false");
-  const [showNewPassword, setShowNewPassword] = useState("false");
-  const [showConPassword, setShowConPassword] = useState("false");
+const ForgotPass: React.FC = () => {
+  const [showPassword, setShowPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConPassword, setShowConPassword] = useState(false);
   const initialValues = {
     current_password: "",
     new_password: "",
     confirm_password: "",
   };
   const navigate = useNavigate();
-  const userData = JSON.parse(localStorage.getItem("user")) || [];
+  const userData = JSON.parse((localStorage.getItem("user") as string) || "[]");
+  console.log(userData);
   const { values, errors, touched, handleBlur, handleChange, handleSubmit } =
     useFormik({
       initialValues,
       validationSchema: forgotPasswordSchema,
 
       onSubmit: (values) => {
-        const activeUser = userData.find((user) => user.isLogin === true) || [];
+        const activeUser =
+          userData.find((user: any) => user.isLogin === true) || {};
         console.log(activeUser.password);
 
-        const changedPassword = userData.map((item) => {
+        const changedPassword = userData.map((item: any) => {
           if (item.isLogin === true) {
             if (decryption(activeUser.password) === values.current_password) {
               if (values.current_password !== values.new_password) {
-                toast.success(messages.passwordSuccess);
+                toast.success(messages.UpdateSuccess);
                 navigate("/userprofile");
                 return {
                   ...item,
@@ -53,6 +55,7 @@ const ForgotPass = () => {
         localStorage.setItem("user", JSON.stringify(changedPassword));
       },
     });
+
   return (
     <>
       <div className="forgot_container">
@@ -87,7 +90,7 @@ const ForgotPass = () => {
                   </div>
                   <Button
                     variant={"ghost"}
-                    className=" text-center toggle-password  "
+                    className="text-center toggle-password"
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? <FaEyeSlash /> : <FaEye />}
@@ -118,7 +121,7 @@ const ForgotPass = () => {
                   </div>
                   <Button
                     variant={"ghost"}
-                    className=" text-center toggle-password  "
+                    className="text-center toggle-password"
                     onClick={() => setShowNewPassword(!showNewPassword)}
                   >
                     {showNewPassword ? <FaEyeSlash /> : <FaEye />}
@@ -149,7 +152,7 @@ const ForgotPass = () => {
                   </div>
                   <Button
                     variant={"ghost"}
-                    className=" text-center toggle-password  "
+                    className="text-center toggle-password"
                     onClick={() => setShowConPassword(!showConPassword)}
                   >
                     {showConPassword ? <FaEyeSlash /> : <FaEye />}
@@ -159,11 +162,17 @@ const ForgotPass = () => {
                   <button
                     className="input-button_forgot"
                     type="submit"
-                    onClick={handleSubmit}
+                    onClick={() => handleSubmit()}
                   >
                     Submit
                   </button>
                 </div>
+                <Link to="/userprofile">
+              
+                  <div className="modal-buttons mt-1">
+                    <button className="input-button_forgot">back</button>
+                  </div>
+                </Link>
               </form>
             </div>
             <div className="modal-right">
@@ -178,6 +187,5 @@ const ForgotPass = () => {
     </>
   );
 };
-export default ForgotPass;
 
-// handleChange and handleBlur are used together to handle form validation and to update the state of the form in real-time as the user interacts with it.
+export default ForgotPass;
